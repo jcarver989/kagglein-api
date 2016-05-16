@@ -18,11 +18,8 @@ namespace :db do
     require 'open-uri'
     data  = open(args[:answer_file]) {|f| f.read }
     
-    # The test set file is assumed to have a header row (which we remove)
-    # and we assume the last column in the file is the target atttribute (answer)
     answers = []
-    CSV.new(data).to_a.each { |row| answers << row[-1] }
-    answers.shift 
+    CSV.new(data, { :col_sep => "\t" }).to_a.each { |row| answers << row[-1] }
     Answer.delete_all
     answers.each { |a| Answer.create(answer: a.to_s) }
   end
