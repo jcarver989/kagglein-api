@@ -40,3 +40,9 @@ post '/score/:api_key' do
     "Score: #{score * 100}%"
   end
 end
+
+get '/leaderboard' do
+  lines = ["Leaderboard", "-----------------------"]
+  Score.leaders.each { |s| lines << s.join("\t") }
+  lines.join("\n")
+end

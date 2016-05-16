@@ -19,4 +19,14 @@ class Score < ActiveRecord::Base
     score = correct / answers.size.to_f
     Score.create(api_key: api_key, score: score)
   end
+
+
+  def self.leaders
+    # TODO, Score really should be a belongs_to: team
+    scores_by_team = Score.group(:api_key).maximum(:score).collect do |api_key, score|
+      [Team.find_by(api_key: api_key).name, (score * 100).round(2)]
+    end
+
+    scores_by_team.sort { |a,b| b[-1] <=> a[-1] }
+  end
 end

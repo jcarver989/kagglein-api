@@ -65,4 +65,35 @@ describe "API" do
     post("/score/madeUpKey", { guesses: [1] }.to_json, h)
     assert_equal expected, last_response.body
   end
+
+  it "should have a leaderboard" do 
+    Team.delete_all
+    Team.create(name: "team1", api_key: "team1")
+    Team.create(name: "team2", api_key: "team2")
+    Team.create(name: "team3", api_key: "team3")
+
+    answers = [1, 0, 0]
+
+   #team 1 gets 2/3
+    Score.calculate_and_record_score("team1", answers, [0,0,0])
+
+    # team 3 gets 1/3 on first guess, 3/3 on second guess
+    Score.calculate_and_record_score("team2", answers, [1,1,0])
+    Score.calculate_and_record_score("team2", answers, [1,0,0])
+
+    #team 3 gets 1/3
+    Score.calculate_and_record_score("team3", answers, [1,1,1])
+
+    get "/leaderboard"
+
+    expected = [
+      "Leaderboard", 
+      "-----------------------",
+      "team2\t100.0",
+      "team1\t66.67",
+      "team3\t33.33"
+    ]
+
+    assert_equal expected.join("\n"), last_response.body
+  end
 end

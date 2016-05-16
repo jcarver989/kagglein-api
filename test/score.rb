@@ -3,6 +3,7 @@ require './test/test_helper'
 describe Score do
   before do
     Score.delete_all
+    Team.delete_all
   end
 
   it "can calculate a score" do 
@@ -51,4 +52,32 @@ describe Score do
 
     assert_equal Score.score_attempts_left_today("123"), 3 
   end
+
+
+  it "can output a leaderboard" do 
+    Team.create(name: "team1", api_key: "team1")
+    Team.create(name: "team2", api_key: "team2")
+    Team.create(name: "team3", api_key: "team3")
+
+    answers = [1,0,0]
+
+    #team 1 gets 2/3
+    Score.calculate_and_record_score("team1", answers, [0,0,0])
+
+    # team 3 gets 1/3 on first guess, 3/3 on second guess
+    Score.calculate_and_record_score("team2", answers, [1,1,0])
+    Score.calculate_and_record_score("team2", answers, [1,0,0])
+
+    #team 3 gets 1/3
+    Score.calculate_and_record_score("team3", answers, [1,1,1])
+
+    expected = [
+      ["team2", 100], 
+      ["team1", 66.67], 
+      ["team3", 33.33]
+    ]
+
+    assert_equal expected, Score.leaders
+  end
+
 end
