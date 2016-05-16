@@ -86,14 +86,14 @@ describe "API" do
 
     get "/leaderboard"
 
-    expected = [
-      "Leaderboard", 
-      "-----------------------",
-      "team2\t100.0",
-      "team1\t66.67",
-      "team3\t33.33"
-    ]
+    expected = { 
+      leaderboard: [
+        ["team2", 100.0],
+        ["team1", 66.67],
+        ["team3",33.33]
+      ]
+    }.to_json
 
-    assert_equal expected.join("\n"), last_response.body
+    assert_equal expected, last_response.body
   end
 end

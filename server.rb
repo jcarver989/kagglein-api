@@ -42,7 +42,6 @@ post '/score/:api_key' do
 end
 
 get '/leaderboard' do
-  lines = ["Leaderboard", "-----------------------"]
-  Score.leaders.each { |s| lines << s.join("\t") }
-  lines.join("\n")
+  content_type :json
+  { leaderboard: Score.leaders }.to_json
 end
