@@ -57,6 +57,19 @@ describe "API" do
     assert_equal 3, Score.all.size
   end
 
+  it "should be forgiving when all guesses are wrong" do
+    post("/score/123", { guesses: [0] }.to_json, h)
+    post("/score/123", { guesses: [0] }.to_json, h)
+    assert_equal 2, Score.all.size
+
+    get "/score/123" 
+    assert_equal "You have 3 more attempts at scoring today", last_response.body
+
+
+    post("/score/123", { guesses: [0] }.to_json, h)
+    assert_equal "Yo, you must have done something silly since you got 0.0%. Since you got NOTHING RIGHT, this wont count against your daily limit", last_response.body
+  end
+
   it "should check that the api_keys are valid" do
     expected = "madeUpKey is not a valid api key"
     get "/score/madeUpKey"

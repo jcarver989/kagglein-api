@@ -37,7 +37,11 @@ post '/score/:api_key' do
     end
 
     score = Score.calculate_and_record_score(api_key, answers, guesses).score
+    if score == 0
+      "Yo, you must have done something silly since you got 0.0%. Since you got NOTHING RIGHT, this wont count against your daily limit" 
+    else
     "Score: #{score * 100}%"
+    end
   end
 end
 

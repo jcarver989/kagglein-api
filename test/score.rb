@@ -34,6 +34,11 @@ describe Score do
     assert_equal Score.score_attempts_left_today("123"), 2 
   end
 
+it "does not count score against limit if score was 0" do
+    Score.calculate_and_record_score("123", [1,1], [0,0])
+    assert_equal Score.score_attempts_left_today("123"), 3 
+  end
+
   it "never says less than 0 attempts " do
     Score.calculate_and_record_score("123", [1,0], [1,1])
     Score.calculate_and_record_score("123", [1,0], [1,1])

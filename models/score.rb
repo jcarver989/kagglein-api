@@ -6,7 +6,10 @@ class Score < ActiveRecord::Base
   def self.score_attempts_left_today(api_key)
     today = Date.today
     time_range = today.beginning_of_day..today.end_of_day
-    recent_scores = Score.where(api_key: api_key, created_at: time_range)
+    recent_scores = Score
+      .where(api_key: api_key, created_at: time_range)
+      .where("score > ?", 0)
+
     [@@max_guesses_per_day - recent_scores.size, 0].max
   end
 
