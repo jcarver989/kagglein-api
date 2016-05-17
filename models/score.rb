@@ -4,8 +4,8 @@ class Score < ActiveRecord::Base
   @@max_guesses_per_day = 3
   
   def self.score_attempts_left_today(api_key)
-    now = Time.now
-    time_range = (now - 1.day)..now
+    today = Date.today
+    time_range = today.beginning_of_day..today.end_of_day
     recent_scores = Score.where(api_key: api_key, created_at: time_range)
     [@@max_guesses_per_day - recent_scores.size, 0].max
   end
